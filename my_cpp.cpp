@@ -1,4 +1,5 @@
 // This is first version
+// Updated on GitHub for 2nd version
 
 using namespace std;
 
