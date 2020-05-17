@@ -3,12 +3,14 @@
 
 using namespace std;
 
+//Function will update the value of passed argument..
 void callme(int *p)
 {
 	cout << "Inside thread: " << this_thread::get_id() << endl;
 	*p=*p+1;
 }
 
+//Argument can also be passed as reference.
 void refcall(const int &rf)
 {
 	cout << "Inside thread: " << this_thread::get_id() << endl;
