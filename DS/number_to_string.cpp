@@ -1,3 +1,7 @@
+/* This program converts from integer number to string format 
+ *
+ */
+
 #include <iostream>
 
 using namespace std;
