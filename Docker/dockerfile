@@ -1,0 +1,25 @@
+#My first docker file
+#Command to execute the docker container:
+# docker run --rm -itd -p 8090:80 --name myserver new_nginx /usr/sbin/nginx
+
+# Pick the base os version
+FROM ubuntu
+
+# Details of maintainer
+MAINTAINER Dharni Singh (dharnisingh@gmail.com)
+
+# Update the repository
+RUN apt-get update
+
+# Install Inginx
+RUN apt-get install -y nginx
+
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+
+# Expose the port 80 of nginx
+EXPOSE 80 443
+
+# Start executin nginx
+#CMD [“/usr/sbin/nginx”,”-g”,”daemon off;”]
+CMD [“service”,”start”,”nginx”]
+
