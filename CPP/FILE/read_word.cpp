@@ -1,3 +1,6 @@
+/** This program read file by words using ">>" operator
+ */
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -9,7 +12,7 @@ int main()
 fstream inf, of;
 string str;
 // Open file for writing using member function "open"
-inf.open("out.txt",ios::out | ios::app);
+inf.open("out.txt",ios::out | ios::trunc);
 cout << "Write contents to file:\n";
 while(inf)
 {
