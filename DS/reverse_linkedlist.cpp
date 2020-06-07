@@ -1,3 +1,6 @@
+/* Program to reverse linked list
+ */
+
 #include <iostream>
 
 using namespace std;
@@ -58,12 +61,14 @@ return curr;
 int main()
 {
 NODE head=NULL;
+//Create linked list
 for(int i=0; i<10; i++)
 {
 	head = create_node(head);
 }
 //Reverser the list
 head = reverse(head);
+// Displaye linked list
 print(head);
 
 return 0;

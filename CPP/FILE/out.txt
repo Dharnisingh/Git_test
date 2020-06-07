@@ -1,0 +1,9 @@
+Hello This 
+is Dharni
+and I am 
+creating a new file
+lets see
+how can I read first
+line of this file
+see you at the end
+-1

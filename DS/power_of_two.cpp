@@ -19,7 +19,7 @@ cin >> n;
 // 8 -- 1000
 // if we perform & operation with n-1 then it will return in 0
 // and for any other number it will never be 0
-int res = !((n-1)&n);
+int res = !((n-1) & n);
 
 cout << "Result = " << res << endl;
 

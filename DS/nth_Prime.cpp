@@ -1,3 +1,6 @@
+/* Program to find nt prime number
+ */
+
 #include <bits/stdc++.h> 
 #include <iostream>
 using namespace std; 

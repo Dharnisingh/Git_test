@@ -1,3 +1,6 @@
+/* Program to allocate memory for 2d Array
+ */
+
 #include <iostream>
 
 using namespace std;
