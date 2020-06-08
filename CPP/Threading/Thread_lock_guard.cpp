@@ -1,4 +1,7 @@
-/* Program to implement lock_guard<mutex> 
+/* Program to implement lock_guard<mutex>
+* std::lock_guard is a class template, which implements the RAII for mutex.
+* It wraps the mutex inside it’s object and locks the attached mutex in its constructor. 
+* When it’s destructor is called it releases the mutex.
  */
 #include<iostream>
 #include <thread>
