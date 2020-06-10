@@ -1,0 +1,121 @@
+Docker interface:
+=================
+ifconfig command will show a new interface for Docker as "docker0"
+
+Getting a docker image:
+=======================
+1: docker pull <image name>:<tag>    ==> Downloads image from docker hub if image is not available on local machine.
+
+Docker status:
+==============
+1: docker ps      ==> Display all running staus of conatiner
+2: docker ps -a   ==> Display all running, exited or stopped container
+3: docker ps -n 2 ==> Show n last created containers (includes all states)
+
+Docker images:
+==============
+1: docker images  	==> Show all the availble images with name, tag, image ID and SIZE
+2: docker images -q 	==> Show only image ID
+
+Remove Docker Images:
+=====================
+1: docker rmi <image name/ image ID> ==> Removes the docker image
+
+Remove Container:
+=================
+1: docker rm <container ID>     ==> Removes the exited container
+2: docker rm -f <container ID>  ==> Force the removal of a running container (uses SIGKILL)
+3: docker rm -l <container ID>  ==> Remove the specified link
+4: docker rm -v <container ID>  ==> Remove anonymous volumes associated with the container
+5: docker rm -f $(docker ps -aq)   ==> Removes all the container
+
+Running Docker:
+===============
+1: docker run -it <image name> <command>  ==> Start running and enter into container with specified command(bash)
+					  ==> i - interactive, t - terminal
+Example: docker run -d -p 80:80 my_image nginx -g 'daemon off;'
+
+2: docker run -rm <image name>            ==> Container will be removed automatically after exit.
+3: docker run -it -h <host_name> <image name> ==> host_name will be shown when you enter into container
+4: docker run -it --name <my container>   ==> Assign a name to container
+5: docker exec -it <container ID> <command>   ==> Enter into container with interative terminal				
+
+Start/Stop Container:
+=====================
+1: docker stop <container ID>    ==> stops a running container
+2: docker start <container ID>   ==> start a stopped container
+
+Stats of container:
+==========================
+1: docker stats <container ID>    ==> Display a live stream of container(s) resource usage statistics
+
+Docker attach:
+==============
+# Attach local standard input, output, and error streams to a running container
+# Once attached we can use host std-input/output with container
+
+1:docker run -d --name topdemo ubuntu /usr/bin/top -b ==> Run docker in daemon mode
+2: docker attach topdemo ==> Attach std-input, std-output, std-error with local host
+
+Inspect container:
+===================
+1: docker inspect <container ID>  ==> Return low-level information on Docker objects
+
+Creating custom docker image:
+============================
+1: docker pull <image name>    ==> pull the base image from docker hub
+2: docker run -it <image name > bash  ==> start and enter into container
+3: install and copy all the images into container
+4: exit from container ctrl+p+q
+5: docker commit -m <commit message> <container ID> <image_name>:<tag_name>
+   docker commit c3f279d17e0a  svendowideit/testimage:version3
+
+Creating docker image using Dockerfile
+======================================
+Create a file named Dockerfile and place all the instruction to crete a docker image
+
+Docker file Command:
+1: FROM <image>:<tag>
+2: RUN <command> ==> Adds a new layer to the container (same as ADD, COPY)
+                 ==> Do not add multiple RUN command it will increase the container size instead use && to combine commands
+                 ==> RUN apt-get update && apt-get install nginx
+3: CMD ["cmd_bin","arg1", "arg2",...] ==> Docker file can have only one CMD if multiple CMD give the last one would be effective
+				      ==> CMD can be overwridden while executing docker image
+4: ENTRYPOINT ==> same as CMD
+5: VOLUME <volume_name>  ==> Creates a volume with specified name
+6: ENV home /dharni/code/  ==> Creates environment variable
+7: WORKDIR <Dir path or name> ==> Sets the working directory for any RUN,CMD, COPY or ADD instruction
+	WORKDIR /a
+	WORKDIR b
+	WORKDIR c
+	RUN pwd ==> /a/b/c
+
+Push Docker image to dockerhub:
+=================================
+1: docker login -u dharnisingh
+2: docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]
+   docker tag <image ID>:<tag_name> <my_image>:<my_tag> 
+3: docker push <my_image>:<my_tag>
+
+
+Docker Volume:
+==============
+1: docker volume create <volume_name>   ==> Creates volume
+2: docker volume ls ==> list all the docker volume
+3: docker volume inspect <volume_name>  ==> Details of volume
+4: docker volume prune ==> Removes all un-used local volume
+
+Attaching volume with container:
+================================
+1: docker run -it -v <volume_name>:<path_of_container> <image_name>
+
+NOTE: Docker inspect <container ID> output will have a field  <mountpoint> all the data can be found 
+      at this path: /var/lib/docker/volume/volume_name/_data
+
+Port mapping:
+=============
+1: docker run -it -P <image name> ==> Capital P will assign a dynamic port each time we run the container
+2: docker run -it p <host_port>:<container_port> <image_name> ==> Maps the static port of host to container
+	docker run -itd -p 1234:8080 tomcat
+
+
