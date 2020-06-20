@@ -45,7 +45,7 @@ st.push_back(obj5);
 //Sort algo needs Random access ierator which list does not support
 //sort(st.begin(), st.end());
 
-st.sort();
+st.sort(); // sort usese , or > operator to sort the elements in list 
 for(auto x: st)
 	cout << x.get_roll() << endl;
 

@@ -13,7 +13,7 @@ class base
 			cout << "Constructor called\n";
 		}
 	// new operato is a static function hence it does not support this pointer
-	// delete operator is also a stati function
+	// delete operator is also a static function
 	void* operator new(size_t sz) 
 	{
 		cout << "Calling overloaded New operator\n";
@@ -39,6 +39,10 @@ class base
 
 int main()
 {
+//1: Allocate memory
+//2: call the constructor
 base *obj = new base(5);
+// free the memory
+delete obj;
 return 0;
 }
