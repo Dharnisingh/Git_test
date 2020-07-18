@@ -1,0 +1,96 @@
+=====================
+File: app.py
+Execute: flask run  -p 5001
+=====================
+# Import framework
+from flask import Flask
+from flask_restful import Resource, Api
+from flask_cors import CORS #To resolve localhost issue
+
+# Instantiate the app
+app = Flask(__name__)
+cors = CORS(app)
+api = Api(app)
+
+dic = [{'name': "madam"},
+        {'name': "Raam"},
+        {'name': "Ganesh"},
+        {'name': "aba"},
+        {'name': "sam"}
+]
+# List the resource
+class lst(Resource):
+    def get(self):
+        return dic
+# Add fields
+class add(Resource):
+    def put(self,nam):
+        dic.append({'name': nam})
+        return dic
+# Find value
+class find(Resource):
+    def get(self,nam):
+        for i in range(len(dic)):
+            if dic[i]['name'] == nam:
+                return ['true']
+# Delete value
+class dlt(Resource):
+    def delete(self,nam):
+        for i in range(len(dic)):
+            if dic[i]['name'] == nam:
+                del dic[i]
+# Create routes
+api.add_resource(lst, '/list/')
+api.add_resource(add, '/add/<string:nam>', methods=['PUT'])
+api.add_resource(find, '/find/<string:nam>')
+api.add_resource(dlt, '/delete/<string:nam>', methods=['DELETE'])
+
+# Run the application
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80, debug=True)
+
+
+==================
+File: index.html
+==================
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Fetch API</title>
+  </head>
+  <body>
+    <div>
+      <h1>Fetch API GET REQUEST</h1>
+      <h3>Fetching Users</h3>
+      <!-- Table to display fetched user data -->
+      <table id="users"></table>
+    </div>
+
+    <!-- Link JavaScript file -->
+    <script src="main.js"></script>
+  </body>
+</html>
+
+===================
+File: main.js
+===================
+
+fetch("http://127.0.0.1:5001/list")
+
+    // Converting received data to JSON
+    .then(response => response.json())
+    .then(json => {
+
+        // Create a variable to store HTML
+        let li = `<tr><th>Name</th></tr>`;
+
+        // Loop through each data and add a table row
+        json.forEach(user => {
+            li += `<tr>
+                <td>${user.name} </td>
+            </tr>`;
+        });
+
+    // Display result
+    document.getElementById("users").innerHTML = li;
+}); 
