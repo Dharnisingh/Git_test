@@ -1,0 +1,282 @@
+https://github.com/AnthonyCalandra/modern-cpp-features/blob/master/CPP11.md#trailing-return-types
+NOTE:
+======
+1: Since C++11, auto is no longer a storage class specifier; it is used to indicate type deduction
+
+C++ 11 Features
+===============
+1: noexcept operator:
+=====================
+The noexcept operator performs a compile-time check that returns true if an expression is declared to not throw any exceptions.
+It can be used within a function template's noexcept specifier to declare that the function will throw exceptions for some types but not others.
+
+void may_throw();
+void no_throw() noexcept; ==> Delared to not throw exception
+
+std::cout << std::boolalpha
+           << "Is may_throw() noexcept? " << noexcept(may_throw()) << '\n' ==>Is may_throw() noexcept? false
+           << "Is no_throw() noexcept? " << noexcept(no_throw()) << '\n'   ==>Is no_throw() noexcept? true
+
+2: constexpr:
+=============
+The constexpr specifier declares that it is possible to evaluate the value of the function or variable at compile time.
+ # Constexpr variable:
+  * its type must be a LiteralType.
+  * it must be immediately initialized
+  * constexpr int x = 5+5/5;
+ # Constexpr function:
+  * its return type (if any) must be a LiteralType
+  * each of its parameters must be a LiteralType
+  * the function body must not contain a goto statement
+ # Value of constexpr function are known at compile time so no extra computation at run time
+
+3: null pointer constant 
+=========================
+Not just a numeric constant, it has its own type - decltype(nullptr) is std::nullptr_t
+
+void foo(char*);
+void foo(int);
+
+foo(nullptr); // calls first foo(char*)
+foo(NULL); // Error Ambigus call 
+
+4: Raw string literals
+=======================
+Old format: string test= "C:\\path\\file1.txt"; cout << test << endl;
+New format: string test= R"(C:\path\file1.txt)";cout << test << endl;
+
+5: auto keyword(type inference)
+===============================
+When initializing a variable, the auto keyword can be used in place of the type to tell the compiler to infer the 
+variable’s type from the initializer’s type. This is called type inference (also sometimes called type deduction).
+for(auto it= vec.begin(); it!=vec.end(); it++)
+auto a = 10; ==> a is an int
+auto b = 9.5 ==> b is a double
+
+6: decltype specifier
+=====================
+Extract the type from a variable
+int x = 3;
+decltype(x) y = x; OR auto y = x; OR int y = x;
+
+# decltype checks for expression type
+template<typename a, typename b>
+b add(a,b)
+{
+	return a+b;
+}
+add(5, 3.2); // result 8.2
+add(3.2, 5); // result 8
+Results are different becaue type of b is different to solve this we use decltype
+
+7: in-class member initializers
+===============================
+Prior to C++11 only const static is allowed in class initialization
+class A {
+public:
+	A(){}
+	A(int a): a(_a){}
+private:
+	const int a = 4;
+	int b = 10;
+	string s = "Test";
+};
+
+8: override (for virtual function)
+==================================
+To avoid creating new function un-intentionaly in derived class 
+class dog{
+	virtual void a(int);
+	virtual void b() const;
+	void c();
+};
+class yellowDog: public dog{
+	virtual void a(float) override ==> Error no function to override
+	virtual void b() override      ==> Error no function to override
+	void c() override              ==> Error not a virtual funtion
+};
+NOTE: if override keyword is missing in above declaration then new funtion would get created.
+
+9: final keyword
+================
+For Class and virtual functions
+
+class dog final
+{
+// No class can be derived from dog class
+} ;
+
+class dog{
+	virtual void bark() final; ==> No class can override the bark() method
+};
+
+10: default keyword
+===================
+Force compiler to generate default constructor otherwise deleted by default
+class dog{
+dog() = default // deleted otherwise
+dog(int age);
+dog& operator=(const dog&) = delete // disallow assignment
+}; 
+
+11: range based for loop:
+=========================
+for(int i : vec) ==> Reads each elements for vector vec till the vec.end()
+for(auto &i: vec)
+{
+	i++ // changes the value in vec
+}
+Works on any class that has begin() and end() random access.
+
+12: Initializer list:
+=====================
+vector<int> vec = {1,2,3,4};
+class magicFoo{
+	public:
+		void foo(std::initializer_list <int> list) {
+			for (std::initializer_list <int >::iterator it = list.begin(); it != list.end(); ++it) 
+				vec.push_back(*it);
+		}
+};
+magicFoo.foo({6,7,8,9});
+
+13: enum class:
+===============
+In c++ 03 enum represents decimal values
+enum apple{green_a, red_a};
+	apple a = red_a; // a==1
+enmu orange{big_o, small_o}
+	orange o = small_o; // o==1
+if(a==o) // It will compare two diff objects which is incorrect
+
+enum class apple{green_a, red_a};
+enum class orange{big_o, small_o};
+	apple a = apple::green_a;
+	orange o = orange::big_o;
+if(a==o) // compiletime error as == operator is not overloaded
+
+14: static assert:
+==================
+Prior to c++11 #error macro was used to generate error at runtime
+#if !defined _WINDO
+#error "WINDO is not defined"
+#endif
+
+==> runtime assert
+	assert(myptr != NULL);
+==> static assert(c++11) //Performs compile-time assertion checking
+	1: static_assert(sizeof(int) == 4) //static_assert ( bool_constexpr )
+	2: static_assert((a!=b), "A is not equal to b") // static_assert ( bool_constexpr , message )
+
+15: Delegating constructor:
+===========================
+Once constructor calls another constructor of same class.
+class dog{
+	public:
+		dog(){}
+		dog(int a):dog(){} //Calling default constructor 
+};
+
+16: Inheritance constructor
+===========================
+In traditional C++, constructors need to pass arguments one by one if they need inheritance, which
+leads to inefficiency. C++11 introduces the concept of inheritance constructors using the keyword "using"
+
+class base{
+	public:
+		base();
+};
+class child: public base{
+	public:
+		using base::base; // no barckets inheritance constructor
+};
+
+17: Lambda Expression 
+======================
+ #Lambda expressions actually provide a feature like anonymous functions. Anonymous functions are used when a function
+  is needed, but you don’t want to use name to call a function
+ # By default, value-captures cannot be modified inside the lambda because the compiler-generated method is marked as const
+ auto f2 = [x] { x = 2; }; // ERROR: the lambda can only perform const-operations on the captured value
+ // vs.
+ auto f3 = [x]() mutable { x = 2; }; // OK: the lambda can perform any operations on the captured value
+ 
+ #syntax of lambda expression:
+ [capture list] (parameter list) mutable(optional) exception attribute -> return
+ type {
+  // function body
+ }
+ # We can assign lambda to any function pointer and use that through that
+	auto fun = [](int x, int y){return x+y;}
+	cout << fun(3,4) << endl // output 7
+ # Types of capture
+	1: Value capture //[int i]
+	2: Reference capture // [& i] 
+	3: Implicit capture // [&] reference capture, let the compiler derive the capture list by itself
+	4: Expression capture // [v1 = 1, v2 = std::move(important)]]
+	5: Generic Lambda // []
+
+[]      - captures nothing.
+[=]     - capture local objects (local variables, parameters) in scope by value.
+[&]     - capture local objects (local variables, parameters) in scope by reference.
+[this]  - capture this pointer by value.
+[a, &b] - capture objects a by value, b by reference.
+
+[] ==> this bracket will hold the loca variable of function from where we are calling lembda
+	int main()
+	{
+		int x;
+		auto myfun = [x](int a){return x+a};
+		cout << myfun(4);
+	}
+
+16: Smart Pointers and Memory Management
+========================================
+ # std::shared_ptr
+ # std::unique_ptr
+ # std::weak_ptr
+
+17: move semantics
+==================
+ # lvalue: is stored in momory and will exist on the next line of code
+ # rvalue: is temporary and will not exist on the next line of code
+ 
+ int&& xr = x; // compiler error -- `x` is an lvalue 
+ int&& xr2 = 0; // `xr2` is an lvalue of type `int&&` -- binds to the rvalue temporary, `0`
+
+ string A = "Hello world"; // Creates new object A.
+ string &&B = "Hello World" // Will not create a new object just refer to "Hello world"
+               will not call copy constructor.
+
+ # std::move() : cast the argument to rvalue reference.
+
+// Normal method
+fun(int& i)
+{
+	cout << i;
+}   
+// rvalue method
+ fun(int&& a)
+ {
+	cout << a;
+ }
+ int i = 5;
+ fun(std::move(i))  // Call rvalue method
+ # Copy is expensive if we do not care about what happen to the value of variable after using it the use rvalue reference
+
+18: Variadic templates
+=======================
+ # A template parameter pack is a template parameter that accepts zero or more template arguments (non-types, types, or templates). 
+   A template with at least one parameter pack is called a variadic template
+ # An interesting use for this is creating an initializer list from a parameter pack in order to iterate over variadic function arguments.
+  
+template <typename First, typename... Args>
+auto sum(const First first, const Args... args) -> decltype(first) {
+  const auto values = {first, args...};
+  return std::accumulate(values.begin(), values.end(), First{0});
+}
+
+sum(1, 2, 3, 4, 5); // 15
+sum(1, 2, 3);       // 6               
+sum(1.5, 2.0, 3.7); // 7.2
+ 
+
